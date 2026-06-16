@@ -1,51 +1,51 @@
 # Multi-Agent TRPG App
 
-利用大语言模型构建的深度沉浸、逻辑自洽且具有长线记忆的硬核文字 RPG 游戏。通过多 Agent 协作与确定性计算引擎，解决传统模型在长文本环境下出现的遗忘、幻觉以及数值膨胀等痛点。
+A hardcore text-based RPG built with large language models, designed for deep immersion, logical consistency, and long-term memory. Through multi-agent collaboration and a deterministic computation engine, it addresses common LLM pain points in long-form text scenarios: forgetting, hallucination, and runaway numerical inflation.
 
-## 核心系统架构
+## Core System Architecture
 
-系统采用 **「大脑（LLM）+ 脊髓（LangGraph）+ 记忆（RAG/DB）+ 骨骼（Combat Engine）」** 的分层架构。
+The system follows a layered architecture: **Brain (LLM) + Spinal Cord (LangGraph) + Memory (RAG/DB) + Skeleton (Combat Engine)**.
 
-### 多 Agent 协作分工
+### Multi-Agent Collaboration
 
-| Agent              | 职责                                                                                                                                                                  |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **逻辑检察官**     | **输入验证**：检查玩家意图是否符合现实逻辑。<br>**输出审查**：确保导演 Agent 生成的描述符合历史背景。<br>**状态触发**：判定玩家操作是否触发战斗、任务完成或剧情转折。 |
-| **世界状态管理器** | **数据读写**：负责解析剧情，更新结构化数据。<br>**属性追踪**：管理军衔、饱食度、弹药、健康值、NPC 好感度。                                                            |
-| **导演 Agent**     | **沉浸叙事**：接收状态数据与 RAG 素材，输出极具文学性的感官描写。<br>**节奏控制**：根据剧情深度模型，控制抛出决策点的时机。                                           |
+| Agent | Responsibilities |
+| ----- | ---------------- |
+| **Logic Prosecutor** | **Input validation**: Checks whether player intent is logically plausible.<br>**Output review**: Ensures the Director Agent's descriptions align with established history.<br>**State triggers**: Determines whether player actions trigger combat, quest completion, or plot twists. |
+| **World State Manager** | **Data read/write**: Parses narrative and updates structured data.<br>**Attribute tracking**: Manages rank, hunger, ammunition, health, and NPC affinity. |
+| **Director Agent** | **Immersive narration**: Receives state data and RAG materials to produce highly literary sensory descriptions.<br>**Pacing control**: Uses a plot-depth model to decide when to present decision points. |
 
-### 分层记忆系统
+### Layered Memory System
 
-| 层级           | 说明                                                    |
-| -------------- | ------------------------------------------------------- |
-| **短期记忆**   | 保留最近 5–10 轮对话原文，维持对话流畅性。              |
-| **结构化状态** | 存储在 SQLite 中的 JSON 对象，代表当前的「存档点」。    |
-| **剧情纪要**   | 由状态管理器每隔 X 轮自动生成剧情摘要，记录重大转折点。 |
-| **知识库**     | 存储史实、武器性能、战术手册，按需检索以增强细节。      |
+| Layer | Description |
+| ----- | ----------- |
+| **Short-term memory** | Retains the last 5–10 turns of dialogue verbatim to maintain conversational flow. |
+| **Structured state** | JSON objects stored in SQLite representing the current "save point." |
+| **Plot summaries** | Automatically generated every X turns by the State Manager to record major turning points. |
+| **Knowledge base** | Stores historical facts, weapon specs, and tactical manuals for on-demand retrieval to enrich detail. |
 
-## 核心机制设计
+## Core Mechanism Design
 
-### 战斗引擎
+### Combat Engine
 
-当逻辑检察官判定「进入战斗」时，系统由 **自由叙事模式** 切换为 **数值结算模式**：
+When the Logic Prosecutor determines "enter combat," the system switches from **free narrative mode** to **numerical resolution mode**:
 
-- **计算公式**：`结果 = (基础战力 + 地形修正 + 天气修正 + 战术加成) × 随机骰子`
-- **结果反馈**：计算结果回传给状态管理器更新属性，并由导演 Agent 进行战况翻译。
+- **Formula**: `Result = (Base Combat Power + Terrain Modifier + Weather Modifier + Tactical Bonus) × Random Dice`
+- **Result feedback**: The computed result is sent back to the State Manager to update attributes, then translated into narrative by the Director Agent.
 
-  > 示例：计算结果为「大败」→ 描写：_你的小队在机枪压制下损失惨重，雪地被鲜血染红。_
+  > Example: Result is "crushing defeat" → Narration: _Your squad suffers heavy losses under machine-gun fire; the snow is stained red with blood._
 
-### 逻辑闭环处理
+### Logic Loop Handling
 
-- **抗作弊机制**：玩家输入「我瞬移到了柏林」，逻辑检察官将返回「操作非法」，并由系统提示。
-- **指令集管理**：预设战斗、行军、休整、对话四种指令模板，每种模板对应不同的提示词偏好。
+- **Anti-cheat**: If a player inputs "I teleport to Berlin," the Logic Prosecutor returns "illegal action," and the system displays a prompt.
+- **Command set management**: Predefined templates for combat, march, rest, and dialogue—each with distinct prompt preferences.
 
-## 技术栈
+## Tech Stack
 
-| 类别         | 选型                                                   |
-| ------------ | ------------------------------------------------------ |
-| 后端         | [FastAPI](https://fastapi.tiangolo.com/)               |
-| Agent 编排   | [LangGraph](https://langchain-ai.github.io/langgraph/) |
-| 语言模型     | DeepSeek-V4 Flash                                      |
-| 关系型数据库 | SQLite                                                 |
-| 向量数据库   | ChromaDB                                               |
-| 前端         | React                                                  |
+| Category | Choice |
+| -------- | ------ |
+| Backend | [FastAPI](https://fastapi.tiangolo.com/) |
+| Agent orchestration | [LangGraph](https://langchain-ai.github.io/langgraph/) |
+| Language model | DeepSeek-V4 Flash |
+| Relational database | SQLite |
+| Vector database | ChromaDB |
+| Frontend | React |
