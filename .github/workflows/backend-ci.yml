@@ -61,7 +61,7 @@ jobs:
           python -m pip install -e ".[dev]"
 
       - name: Run pytest
-        run: pytest
+        run: pytest -W error
 
   coverage:
     name: Coverage
