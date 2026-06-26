@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "httpx", "ruff"]
+dev = ["pytest", "httpx", "ruff", "pytest-cov"]
 
 [build-system]
 requires = ["hatchling"]
