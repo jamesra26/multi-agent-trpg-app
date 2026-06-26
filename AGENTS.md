@@ -11,6 +11,11 @@
 - 尊重分层边界
 - 新增公开 API 必须补齐文档。
 
+## 脚本工具
+
+- 打开web服务：`./scripts/dev.bat`
+- 测试、lint以及测试覆盖率（CI流水线一条龙）：`./scripts/test.bat`
+
 ## 外部参考
 
 - CHANGELOG: `./CHANGE_LOG.md`
