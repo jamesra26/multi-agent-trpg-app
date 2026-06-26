@@ -1,3 +1,4 @@
+:: Open web server
 @echo off
 setlocal
 
@@ -6,17 +7,17 @@ set "PYTHON=%ROOT%\.venv\Scripts\python.exe"
 set "BACKEND=%ROOT%\backend"
 
 if not exist "%PYTHON%" (
-    echo [´íÎó] Î´ÕÒµ½ÐéÄâ»·¾³: %ROOT%\.venv
-    echo ÇëÏÈÔÚÏîÄ¿¸ùÄ¿Â¼Ö´ÐÐ: python -m venv .venv
-    echo È»ºó: .venv\Scripts\pip install -e "backend/.[dev]"
+    echo [ï¿½ï¿½ï¿½ï¿½] Î´ï¿½Òµï¿½ï¿½ï¿½ï¿½â»·ï¿½ï¿½: %ROOT%\.venv
+    echo ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Ä¿Â¼Ö´ï¿½ï¿½: python -m venv .venv
+    echo È»ï¿½ï¿½: .venv\Scripts\pip install -e "backend/.[dev]"
     pause
     exit /b 1
 )
 
 cd /d "%BACKEND%"
-echo [Æô¶¯] http://127.0.0.1:8000
-echo [ÎÄµµ] http://127.0.0.1:8000/docs
-echo °´ Ctrl+C Í£Ö¹·þÎñ
+echo [ï¿½ï¿½ï¿½ï¿½] http://127.0.0.1:8000
+echo [ï¿½Äµï¿½] http://127.0.0.1:8000/docs
+echo ï¿½ï¿½ Ctrl+C Í£Ö¹ï¿½ï¿½ï¿½ï¿½
 echo.
 
 "%PYTHON%" -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000

@@ -1,3 +1,4 @@
+:: Test, lint, and coverage (GitHub CI pipeline)
 @echo off
 setlocal
 
