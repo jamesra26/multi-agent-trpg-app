@@ -56,7 +56,10 @@ def chat(
         with urlopen(request, timeout=timeout) as response:
             response_body = response.read().decode("utf-8")
     except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
+        try:
+            detail = exc.read().decode("utf-8", errors="replace")
+        finally:
+            exc.close()
         raise DeepSeekChatError(
             f"DeepSeek API request failed with status {exc.code}: {detail}"
         ) from exc

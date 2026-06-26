@@ -84,9 +84,18 @@ echo.
 exit /b %ERRORLEVEL%
 
 :coverage
-echo [workflow] coverage: pytest --cov=app --cov-report=term-missing --cov-report=xml
+echo [workflow] coverage: pytest --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json
 echo.
-"%PYTHON%" -m pytest --cov=app --cov-report=term-missing --cov-report=xml
+"%PYTHON%" -m pytest --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :enforce_module_coverage
+exit /b %ERRORLEVEL%
+
+:enforce_module_coverage
+echo.
+echo [workflow] coverage gate: every module must be at least 95 percent
+echo.
+"%PYTHON%" -c "import json, sys; threshold=95.0; data=json.load(open('coverage.json', encoding='utf-8')); failed=[]; [failed.append((path, module['summary']['percent_covered'])) for path, module in sorted(data['files'].items()) if module['summary']['num_statements'] > 0 and module['summary']['percent_covered'] < threshold]; print('Modules below 95 percent coverage:' if failed else 'All modules meet the 95 percent coverage threshold.'); [print('- {}: {:.2f} percent'.format(path, percent)) for path, percent in failed]; sys.exit(1 if failed else 0)"
 exit /b %ERRORLEVEL%
 
 :passed

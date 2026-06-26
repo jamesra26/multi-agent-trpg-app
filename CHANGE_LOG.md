@@ -1,3 +1,69 @@
+### 2026-06-26 20:06 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：CI 门禁增强
+- 涉及文件：
+  - .github/workflows/backend-ci.yml
+  - backend/pyproject.toml
+  - backend/app/core/llm.py
+  - backend/tests/test_health.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - CI 的 pytest job 和 coverage job 增加 -W error，所有 warning 都会导致失败。
+  - dev 依赖补充 httpx2，避免 Starlette TestClient 兼容层产生 deprecation warning。
+  - health 测试改用 starlette.testclient.TestClient。
+  - DeepSeek HTTPError 分支读取错误体后显式 close，避免 ResourceWarning。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pip install -e ".[dev]"。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，23 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，23 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check app\core\llm.py tests\test_health.py，检查通过。
+
+### 2026-06-26 20:04 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：脚本修复
+- 涉及文件：
+  - scripts/test.bat
+  - CHANGE_LOG.md
+- 变更内容：
+  - 修复 coverage 门禁中裸 % 被 Windows batch 当作环境变量展开，导致 python -c 代码出现 SyntaxError 的问题。
+  - 将本地覆盖率门禁输出中的百分号文本改为 percent，避免 cmd 解析破坏内联 Python。
+- 验证：
+  - 已执行 cmd /c "scripts\test.bat coverage < nul"，23 passed，总覆盖率 100%，逐模块 95 percent 门禁通过。
+
+### 2026-06-26 20:01 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：脚本门禁增强
+- 涉及文件：
+  - scripts/test.bat
+  - CHANGE_LOG.md
+- 变更内容：
+  - 本地 coverage 工作流增加 coverage.json 输出。
+  - scripts/test.bat 增加逐模块覆盖率检查，任一有语句模块低于 95% 时脚本失败。
+- 验证：
+  - 已执行 cmd /c "scripts\test.bat coverage < nul"，23 passed，总覆盖率 100%。
+  - 本地逐模块覆盖率门禁通过，所有模块均满足 95% 覆盖率阈值。
+
+### 2026-06-26 20:00 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：CI 门禁增强
+- 涉及文件：
+  - .github/workflows/backend-ci.yml
+  - backend/tests/test_health.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - coverage job 增加 coverage.json 输出，并用内联 Python 检查每个有语句模块覆盖率不低于 95%。
+  - coverage artifact 扩展为同时上传 coverage.xml 和 coverage.json。
+  - 补充根路由测试，确保当前 app/main.py 满足逐模块覆盖率门禁。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，23 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check tests\test_health.py，检查通过。
+
 ### 2026-06-26 19:42 UTC+10
 
 - 执行模型：GPT-5.5
