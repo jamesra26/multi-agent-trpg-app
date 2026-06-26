@@ -5,6 +5,11 @@ description = "Multi-agent TRPG application"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.115.0",
+    "langchain",
+    "langgraph",
+    "pydantic-settings",
+    "chromadb",
+    "sqlalchemy",
     "uvicorn[standard]>=0.32.0",
 ]
 
