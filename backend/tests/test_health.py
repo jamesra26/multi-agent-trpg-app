@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.main import app
 
@@ -11,3 +11,9 @@ def test_health() -> None:
     data = response.json()
     assert data["status"] == "ok"
     assert data["version"] == "0.1.0"
+
+
+def test_root() -> None:
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "TRPG API is running"}
