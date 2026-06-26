@@ -9,3 +9,5 @@ backend/data/
 *.egg-info/
 dist/
 build/
+backend/.coverage
+backend/coverage.xml

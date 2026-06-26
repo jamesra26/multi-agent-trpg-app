@@ -20,6 +20,10 @@ if not exist "%PYTHON%" (
 
 cd /d "%BACKEND%"
 
+call :install_dev_dependencies
+set "EXIT_CODE=%ERRORLEVEL%"
+if errorlevel 1 goto :failed
+
 if /i "%TARGET%"=="lint" (
     call :lint
     goto :after_target
@@ -42,6 +46,12 @@ echo   scripts\test.bat coverage
 echo   scripts\test.bat all
 pause
 exit /b 1
+
+:install_dev_dependencies
+echo [setup] Installing backend dev dependencies...
+echo.
+"%PYTHON%" -m pip install -e ".[dev]"
+exit /b %ERRORLEVEL%
 
 :all
 call :lint

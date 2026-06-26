@@ -1,3 +1,17 @@
+### 2026-06-26 18:39 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：脚本修复
+- 涉及文件：
+  - scripts/test.bat
+  - CHANGE_LOG.md
+- 变更内容：
+  - 修复本地 coverage 工作流因 .venv 未安装 pytest-cov 导致 --cov 参数无法识别的问题。
+  - scripts/test.bat 在执行 lint、pytest、coverage 前会先安装 backend 的 .[dev] 依赖。
+- 验证：
+  - 已执行 cmd /c "scripts\test.bat coverage < nul"。
+  - pytest-cov 插件加载成功，coverage 工作流通过：1 passed，生成 coverage.xml。
+
 ### 2026-06-26 18:33 UTC+10
 
 - 执行模型：GPT-5.5
