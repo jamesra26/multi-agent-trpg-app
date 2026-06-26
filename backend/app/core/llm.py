@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Sequence
-from typing import Any, Literal, TypedDict
+from typing import Literal, TypedDict
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
