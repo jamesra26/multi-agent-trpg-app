@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     )
 
     deepseek_api_key: str = ""
+    deepseek_base_url: str = "https://api.deepseek.com"
+    deepseek_model: str = "deepseek-v4-flash"
     database_url: str = f"sqlite:///{(_BACKEND_DIR / 'data' / 'trpg.db').as_posix()}"
     chroma_path: str = str(_BACKEND_DIR / "data" / "chroma")
     mods_dir: str = str(_PROJECT_ROOT / "mods")
