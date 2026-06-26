@@ -14,3 +14,4 @@
 ## 外部参考
 
 - CHANGELOG: `./CHANGE_LOG.md`
+- Deepseek中文文档：https://api-docs.deepseek.com/zh-cn/
