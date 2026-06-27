@@ -352,6 +352,106 @@ def test_game_state_json_adapter_nested_updates_are_persisted(tmp_path) -> None:
         engine.dispose()
 
 
+def test_game_state_json_adapter_setdefault_nested_update_is_persisted(tmp_path) -> None:
+    db_path = tmp_path / "trpg.db"
+    engine = init_db(f"sqlite:///{db_path.as_posix()}")
+
+    try:
+        with Session(engine) as session:
+            session.add(GameState(save_slot="slot-1", state_json={}))
+            session.commit()
+
+        with Session(engine) as session:
+            saved_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+            assert saved_state is not None
+
+            quests = saved_state.state_json.setdefault("quests", {"main": "进入遗迹"})
+            quests["side"] = "寻找失踪商队"
+            session.commit()
+
+        with Session(engine) as session:
+            updated_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+
+        assert updated_state is not None
+        assert updated_state.state_json["quests"] == {
+            "main": "进入遗迹",
+            "side": "寻找失踪商队",
+        }
+    finally:
+        engine.dispose()
+
+
+def test_game_state_json_adapter_insert_nested_update_is_persisted(tmp_path) -> None:
+    db_path = tmp_path / "trpg.db"
+    engine = init_db(f"sqlite:///{db_path.as_posix()}")
+
+    try:
+        with Session(engine) as session:
+            session.add(GameState(save_slot="slot-1", state_json={"inventory": []}))
+            session.commit()
+
+        with Session(engine) as session:
+            saved_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+            assert saved_state is not None
+
+            saved_state.state_json["inventory"].insert(0, {"name": "火把"})
+            saved_state.state_json["inventory"][0]["count"] = 1
+            session.commit()
+
+        with Session(engine) as session:
+            updated_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+
+        assert updated_state is not None
+        assert updated_state.state_json["inventory"] == [{"name": "火把", "count": 1}]
+    finally:
+        engine.dispose()
+
+
+def test_game_state_json_adapter_slice_assignment_nested_update_is_persisted(
+    tmp_path,
+) -> None:
+    db_path = tmp_path / "trpg.db"
+    engine = init_db(f"sqlite:///{db_path.as_posix()}")
+
+    try:
+        with Session(engine) as session:
+            session.add(
+                GameState(
+                    save_slot="slot-1",
+                    state_json={"inventory": [{"name": "火把"}]},
+                )
+            )
+            session.commit()
+
+        with Session(engine) as session:
+            saved_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+            assert saved_state is not None
+
+            saved_state.state_json["inventory"][0:1] = [{"name": "绳索"}]
+            saved_state.state_json["inventory"][0]["count"] = 1
+            session.commit()
+
+        with Session(engine) as session:
+            updated_state = session.scalar(
+                select(GameState).where(GameState.save_slot == "slot-1")
+            )
+
+        assert updated_state is not None
+        assert updated_state.state_json["inventory"] == [{"name": "绳索", "count": 1}]
+    finally:
+        engine.dispose()
+
+
 def test_game_state_json_adapter_deep_mutable_container_edges() -> None:
     mutable_dict = DeepMutableDict({"items": []})
     mutable_list = DeepMutableList([{"name": "火把"}])

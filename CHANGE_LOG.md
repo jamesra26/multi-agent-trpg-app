@@ -1,3 +1,22 @@
+### 2026-06-27 11:20 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：缺陷修复
+- 涉及文件：
+  - backend/app/db/models.py
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 修复 DeepMutableDict.setdefault() 缺失包装路径的问题，使默认插入的嵌套 dict/list 会绑定正确父级。
+  - 修复 DeepMutableList.insert() 和 slice assignment 未统一走 _coerce_nested() 的问题，确保插入元素的嵌套修改可被 SQLAlchemy 追踪。
+  - 在临时 JSON adapter 测试层新增 setdefault、insert、slice assignment 三个嵌套更新持久化回归用例。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error tests\test_db.py，22 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，45 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，45 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check app\db\models.py tests\test_db.py，检查通过。
+
 ### 2026-06-27 11:13 UTC+10
 
 - 执行模型：GPT-5.5

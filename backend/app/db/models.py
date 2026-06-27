@@ -37,6 +37,11 @@ class DeepMutableDict(MutableDict):
         for key, value in {**other, **kwargs}.items():
             self[key] = value
 
+    def setdefault(self, key: str, default: Any = None) -> Any:
+        if key not in self:
+            self[key] = default
+        return self[key]
+
     def changed(self) -> None:
         super().changed()
         _notify_parent(self)
@@ -55,12 +60,20 @@ class DeepMutableList(MutableList):
             return cls(value)
         return Mutable.coerce(key, value)
 
-    def __setitem__(self, index: int, value: Any) -> None:
-        list.__setitem__(self, index, _coerce_nested(value, self))
+    def __setitem__(self, index: int | slice, value: Any) -> None:
+        if isinstance(index, slice):
+            coerced_value = [_coerce_nested(item, self) for item in value]
+        else:
+            coerced_value = _coerce_nested(value, self)
+        list.__setitem__(self, index, coerced_value)
         self.changed()
 
     def append(self, value: Any) -> None:
         list.append(self, _coerce_nested(value, self))
+        self.changed()
+
+    def insert(self, index: int, value: Any) -> None:
+        list.insert(self, index, _coerce_nested(value, self))
         self.changed()
 
     def extend(self, iterable: list[Any]) -> None:
