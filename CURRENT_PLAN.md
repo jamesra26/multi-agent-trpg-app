@@ -6,9 +6,9 @@
 
 #### 阶段 A — 基础设施补齐（地基）
 
-1. 补全依赖 pyproject.toml：添加 langgraph、langchain、pydantic-settings、chromadb、sqlalchemy（或直接用 sqlite3）
-2. DeepSeek 接入层 app/core/llm.py：封装一个 chat() 调用函数（用 .env 里的 Key），先做到能成功调通一次 API
-3. 数据库初始化 app/db/：定义 GameState 表（存档 JSON），写一个 init_db()
+1. 补全依赖 pyproject.toml：添加 langgraph、langchain、pydantic-settings、chromadb、sqlalchemy（或直接用 sqlite3）**已完成**
+2. DeepSeek 接入层 app/core/llm.py：封装一个 chat() 调用函数（用 .env 里的 Key），先做到能成功调通一次 API **已完成**
+3. 数据库初始化 app/db/：定义 GameState 表（存档 JSON），写一个 init_db() **正在进行**
 
 #### 阶段 B — 数据模型先行（结构化状态）
 
