@@ -1,5 +1,8 @@
 name: Repository CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
