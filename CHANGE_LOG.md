@@ -1,3 +1,22 @@
+### 2026-06-27 11:20 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：缺陷修复
+- 涉及文件：
+  - backend/app/db/models.py
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 修复 DeepMutableDict.setdefault() 缺失包装路径的问题，使默认插入的嵌套 dict/list 会绑定正确父级。
+  - 修复 DeepMutableList.insert() 和 slice assignment 未统一走 _coerce_nested() 的问题，确保插入元素的嵌套修改可被 SQLAlchemy 追踪。
+  - 在临时 JSON adapter 测试层新增 setdefault、insert、slice assignment 三个嵌套更新持久化回归用例。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error tests\test_db.py，22 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，45 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，45 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check app\db\models.py tests\test_db.py，检查通过。
+
 ### 2026-06-27 11:13 UTC+10
 
 - 执行模型：GPT-5.5
@@ -29,6 +48,83 @@
   - 已执行 .\.venv\Scripts\python.exe -m pytest -W error -c backend\pyproject.toml backend\tests，23 passed。
   - 已执行 .\.venv\Scripts\python.exe -m pytest -W error -c backend\pyproject.toml backend\tests --cov=app --cov-report=term-missing --cov-report=xml:backend\coverage.xml --cov-report=json:backend\coverage.json，23 passed，总覆盖率 100%。
   - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+
+### 2026-06-27 11:06 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：测试结构修正
+- 涉及文件：
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 修正 DB 初始化层测试职责，test_init_db_creates_game_state_table 只断言数据库文件和 game_states 表存在，不再断言字段集合。
+  - 将 game_states 字段集合断言移动到 GameState 表基础契约层，避免初始化层依赖临时 state_json 存储形态。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error tests\test_db.py，19 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，42 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，42 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check tests\test_db.py，检查通过。
+
+### 2026-06-27 11:03 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：测试结构调整
+- 涉及文件：
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 重组 DB 测试分层，明确拆分为 DB 初始化层、GameState 表基础契约层、临时 JSON adapter 层和公开导出层。
+  - 基础契约层只将 state_json 作为最小合法占位，不再解析 inventory/quests 等临时 JSON 业务结构。
+  - 将嵌套 JSON 持久化、原地更新追踪和 DeepMutableDict/DeepMutableList 边界集中到临时 JSON adapter 测试区块，便于未来拆列/拆表时整体替换。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error tests\test_db.py，18 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，41 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，41 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check tests\test_db.py，检查通过。
+
+### 2026-06-27 10:58 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：测试增强与模型修复
+- 涉及文件：
+  - backend/app/db/models.py
+  - backend/app/db/README.md
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 扩展 GameState/DB 初始化测试，覆盖 updated_at 更新语义、必填字段约束、字段长度契约、显式 database_url 优先级、SQLite URL 变体、init_db() 幂等性、深层 JSON 更新、SQLite 时间戳语义和 app.db 公开导出。
+  - 将 state_json 改为 DeepMutableDict.as_mutable(JSON(none_as_null=True))，确保 Python None 会触发 NOT NULL 约束，并支持嵌套 dict/list 原地修改被持久化。
+  - 在 app/db/README.md 明确 SQLite 不强制字符串长度，服务/API 层后续需要做输入长度校验；SQLite 取回时间戳按 UTC naive datetime 处理。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error tests\test_db.py，17 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error，40 passed。
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，40 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check app\db tests\test_db.py，检查通过。
+
+### 2026-06-27 10:52 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：数据库基础设施新增
+- 涉及文件：
+  - CURRENT_PLAN.md
+  - backend/app/db/**init**.py
+  - backend/app/db/models.py
+  - backend/app/db/session.py
+  - backend/app/db/README.md
+  - backend/tests/test_db.py
+  - CHANGE_LOG.md
+- 变更内容：
+  - 新增 app/db 数据库层，定义 GameState 表和 init_db() 初始化入口。
+  - GameState 使用 state_json 存储早期快速变化的 TRPG 状态，并在代码注释和 app/db/README.md 标注未来应拆分为背包、任务、NPC 关系、阵营、世界事件、战斗状态和短期记忆等独立列/表。
+  - init_db() 会基于配置的 database_url 创建数据库表，并为 SQLite 文件数据库自动创建父目录。
+  - 将 CURRENT_PLAN.md 中数据库初始化任务标记为已完成。
+- 验证：
+  - 已执行 ..\.venv\Scripts\python.exe -m pytest -W error --cov=app --cov-report=term-missing --cov-report=xml --cov-report=json，28 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+  - 已执行 ..\.venv\Scripts\python.exe -m ruff check app\db tests\test_db.py，检查通过。
 
 ### 2026-06-26 20:06 UTC+10
 
