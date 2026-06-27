@@ -1,3 +1,35 @@
+### 2026-06-27 11:13 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：CI 文件重命名
+- 涉及文件：
+  - .github/workflows/backend-ci.yml
+  - .github/workflows/repository-ci.yml
+  - CHANGE_LOG.md
+- 变更内容：
+  - 将 GitHub Actions workflow 文件从 backend-ci.yml 重命名为 repository-ci.yml，使文件名与 Repository CI 名称和仓库级执行范围一致。
+  - 删除旧的 backend-ci.yml。
+- 验证：
+  - 已确认 .github/workflows 目录仅保留 repository-ci.yml。
+
+### 2026-06-27 11:11 UTC+10
+
+- 执行模型：GPT-5.5
+- 变更类型：CI 范围调整
+- 涉及文件：
+  - .github/workflows/backend-ci.yml
+  - CHANGE_LOG.md
+- 变更内容：
+  - 将 GitHub Actions 名称从 Backend CI 调整为 Repository CI。
+  - 移除各 job 的 backend 默认工作目录，使 workflow 从仓库根目录运行。
+  - lint、pytest、coverage 命令显式指向 backend，覆盖报告仍输出到 backend/coverage.xml 和 backend/coverage.json。
+  - 逐模块覆盖率门禁改为从 backend/coverage.json 读取，适配仓库根目录执行。
+- 验证：
+  - 已执行 .\.venv\Scripts\python.exe -m ruff check backend，检查通过。
+  - 已执行 .\.venv\Scripts\python.exe -m pytest -W error -c backend\pyproject.toml backend\tests，23 passed。
+  - 已执行 .\.venv\Scripts\python.exe -m pytest -W error -c backend\pyproject.toml backend\tests --cov=app --cov-report=term-missing --cov-report=xml:backend\coverage.xml --cov-report=json:backend\coverage.json，23 passed，总覆盖率 100%。
+  - 已执行逐模块覆盖率检查，所有模块均满足 95% 覆盖率阈值。
+
 ### 2026-06-27 11:06 UTC+10
 
 - 执行模型：GPT-5.5
@@ -59,7 +91,7 @@
 - 变更类型：数据库基础设施新增
 - 涉及文件：
   - CURRENT_PLAN.md
-  - backend/app/db/__init__.py
+  - backend/app/db/**init**.py
   - backend/app/db/models.py
   - backend/app/db/session.py
   - backend/app/db/README.md
